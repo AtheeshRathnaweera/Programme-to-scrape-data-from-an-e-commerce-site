@@ -6,6 +6,9 @@ import re
 import os
 from tabulate import tabulate
 import json
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
+
+
 
 #launch url
 url = "https://www.pizzahut.lk/home"
@@ -13,7 +16,12 @@ url = "https://www.pizzahut.lk/home"
 labelList = ["PIZZAS"]
 
 # create a new Firefox session
-driver = webdriver.Firefox()
+
+#Add option for headless browsing
+options = FirefoxOptions()
+options.add_argument("--headless")
+driver = webdriver.Firefox(options=options)
+
 #driver = webdriver.Edge()
 driver.implicitly_wait(30)
 driver.get(url)
@@ -76,7 +84,7 @@ for index in labelList:
                 #leave from the loop
 
 
-    driver.back()
+   
 
     x += 1
 
@@ -89,7 +97,7 @@ pizzaDataFinalJson = json.dumps(pizzaDataList)
 path = os.getcwd()
 
 #open, write, and close the file
-f = open(path + "\\pizza_data.json","w") #FHSU
+f = open(path + "\\pizza_data_json.json","w") #FHSU
 f.write(pizzaDataFinalJson)
 f.close()
 
