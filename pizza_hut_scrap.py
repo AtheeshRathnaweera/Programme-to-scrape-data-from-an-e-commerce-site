@@ -29,9 +29,12 @@ soup_level1=BeautifulSoup(driver.page_source, 'lxml')
 
 x=1#counter
 divsList = []
+popularDealsListImages = []
+AllPromos = [] #store all the promotion images
+pizzaDataList = [] #Empty list for store pizza data
 
 def getThePopularDeals():
-    popularDealsListImages = [] #store popular deals images
+    #store popular deals images
 
     promoDivs = soup_level1.find_all("div",attrs={"class":"col-md-6 col-sm-12 col-xs-12 promo-single promo-add"})
 
@@ -44,15 +47,10 @@ def getThePopularDeals():
         popularDealsListImages.append(singleImage['src'])
     
     print("Number of images : "+str(len(popularDealsListImages)))
-    imageJson = json.dumps(popularDealsListImages)
-    print(" JSOn : "+imageJson)
-
-
-
-
+   
 
 def getAllThePromos():
-    AllPromos = [] #store all the promotion images
+   
 
     url = "https://www.pizzahut.lk/menu/promo/meal-deal"
     driver.implicitly_wait(30)
@@ -82,22 +80,18 @@ def getAllThePromos():
         AllPromos.append(singleItem)
 
 
-    jsonString = json.dumps(AllPromos)
-    print(" all the promos : "+jsonString)   
-
-
-getThePopularDeals()
-getAllThePromos()
-
 
 def getPizzaData():
+    url = "https://www.pizzahut.lk/home"
+    driver.implicitly_wait(30)
+    driver.get(url)
+    x=0
+
 
     for index in labelList:
 
-        pizzaDataList = [] #Empty list for store pizza data
-
         button = driver.find_element_by_link_text(index)
-        print (str(x)+" "+button.get_attribute("href"))
+        print (button.get_attribute("href"))
         button.click()#go to the link
 
         tempPage=BeautifulSoup(driver.page_source, 'lxml')#Selenium hands of the source of the specific job page to Beautiful Soup
@@ -136,33 +130,50 @@ def getPizzaData():
                     pizzaDataList.append(pizzaData)
 
 
-            if i < (numberOfLinksInSubMenu-1): #handling the index out of range
-                nextLink = subMenuLinks[i+1].find('a')
-                driver.find_element_by_link_text(nextLink.get_text().upper()).click()
+                if i < (numberOfLinksInSubMenu-1): #handling the index out of range
+                    nextLink = subMenuLinks[i+1].find('a')
+                    driver.find_element_by_link_text(nextLink.get_text().upper()).click()
            
             #leave from the loop
                 
-        x += 1
+        
 
     print("\nNumber of pizzas: "+str(len(pizzaDataList)))
 
-    pizzaDataFinalJson = json.dumps(pizzaDataList)
+   
 
     #print ("\n"+ pizzaDataFinalJson)
 
-    path = os.getcwd()
-
-    #open, write, and close the file
-    f = open(path + "\\pizza_data_json.json","w") #FHSU
-    f.write(pizzaDataFinalJson)
-    f.close()
-
-    print("All done")
-    driver.quit()#quit the driver
-
-    #go to all the links in order now part
-
-    #python_button = driver.find_element_by_link_text('PIZZAS') #Go to the pizzas page
-    #  python_button.click()
 
 
+
+getThePopularDeals()
+getAllThePromos()
+getPizzaData()
+
+imageJson = json.dumps(popularDealsListImages)
+allPromosJson = json.dumps(AllPromos)
+pizzaDataFinalJson = json.dumps(pizzaDataList)
+
+path = os.getcwd()
+
+#open, write, and close the file
+f = open(path + "\\pizza_data.json","w") #FHSU
+f.write(pizzaDataFinalJson)
+f.close()
+
+f = open(path + "\\popular_deals.json","w") #FHSU
+f.write(imageJson)
+f.close()
+
+f = open(path + "\\all_promos.json","w") #FHSU
+f.write(allPromosJson)
+f.close()
+
+print("All done")
+driver.quit()#quit the driver
+
+#go to all the links in order now part
+
+#python_button = driver.find_element_by_link_text('PIZZAS') #Go to the pizzas page
+#  python_button.click()
