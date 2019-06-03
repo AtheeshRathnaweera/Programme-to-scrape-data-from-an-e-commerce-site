@@ -31,7 +31,7 @@ x=1#counter
 divsList = []
 
 def getThePopularDeals():
-    popularDealsListImages = []
+    popularDealsListImages = [] #store popular deals images
 
     promoDivs = soup_level1.find_all("div",attrs={"class":"col-md-6 col-sm-12 col-xs-12 promo-single promo-add"})
 
@@ -43,13 +43,51 @@ def getThePopularDeals():
         singleImage = promos.find("img",attrs={"class","img img-responsive"})
         popularDealsListImages.append(singleImage['src'])
     
-
     print("Number of images : "+str(len(popularDealsListImages)))
     imageJson = json.dumps(popularDealsListImages)
     print(" JSOn : "+imageJson)
 
 
+
+
+
+def getAllThePromos():
+    AllPromos = [] #store all the promotion images
+
+    url = "https://www.pizzahut.lk/menu/promo/meal-deal"
+    driver.implicitly_wait(30)
+    driver.get(url)
+
+    allThePromosPage=BeautifulSoup(driver.page_source, 'lxml')
+    items = allThePromosPage.find_all("div",attrs={"class","itemContainer promo-item"})
+
+    print("Number of all promos : "+str(len(items)))
+
+    for i,item in enumerate(items) :
+       
+        name = item.find("h3",attrs={"class":"menu-item-name"})['data-original-title']
+    
+        image = item.find("img",attrs={"alt":name})
+        price = item.find("span",attrs={"class":"hidden-sm hidden-xs"})
+        details = item.find("p",attrs = {"class":"menu-item-desc hidden-sm hidden-xs"})
+
+        singleItem = {
+            "name": name,
+            "price":price.get_text().replace('\\n', ''),
+            "desc":details.get_text(),
+            "src": image['src']
+        }
+
+    
+        AllPromos.append(singleItem)
+
+
+    jsonString = json.dumps(AllPromos)
+    print(" all the promos : "+jsonString)   
+
+
 getThePopularDeals()
+getAllThePromos()
 
 
 def getPizzaData():
@@ -95,8 +133,7 @@ def getPizzaData():
                         'desc': itemDescription.get_text()
                             }
                 
-                    pizzaData_json = json.dumps(pizzaData)#create a json string
-                    pizzaDataList.append(pizzaData_json)
+                    pizzaDataList.append(pizzaData)
 
 
             if i < (numberOfLinksInSubMenu-1): #handling the index out of range
