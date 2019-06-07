@@ -8,7 +8,6 @@ from tabulate import tabulate
 import json
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 
-
 #launch url
 url = "https://www.pizzahut.lk/home"
 
@@ -17,9 +16,9 @@ labelList = ["PIZZAS"]
 # create a new Firefox session
 
 #Add option for headless browsing
-#options = FirefoxOptions()options=options
-#options.add_argument("--headless")
-driver = webdriver.Firefox()
+options = FirefoxOptions()
+options.add_argument("--headless")
+driver = webdriver.Firefox(options=options)
 
 #driver = webdriver.Edge()
 driver.implicitly_wait(30)
@@ -108,7 +107,7 @@ def getPizzaData():
                 a = list.find('a')  
 
                 #print(a.get_attribute("class"))
-                print("\n\t\t\t"+a['href'],a.get_text())
+                print("\n\t\t"+a['href'],a.get_text())
 
                 subMenuPage = BeautifulSoup(driver.page_source,'lxml')#get the current page html block
 
@@ -138,7 +137,7 @@ def getPizzaData():
                 
         
 
-    print("\nNumber of pizzas: "+str(len(pizzaDataList)))
+    print("\n\tNumber of pizzas: "+str(len(pizzaDataList)))
 
    
 

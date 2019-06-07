@@ -8,6 +8,8 @@ from tabulate import tabulate
 import json
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 
+from lxml import etree
+print("This is the lxml version: "  +etree.__version__)
 
 #launch url
 url = "https://www.pizzahut.lk/home"
